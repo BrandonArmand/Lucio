@@ -1,0 +1,26 @@
+{
+  "name": "dog-app",
+  "version": "1.0.0",
+  "description": "Social network for dog owners.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "export NODE_ENV=test&& jasmine"
+  },
+  "author": "Brandon Welsh",
+  "license": "ISC",
+  "engines": {
+    "node": "12.8.1"
+  },
+  "devDependencies": {
+    "jasmine": "^3.4.0",
+    "request": "^2.88.0"
+  },
+  "dependencies": {
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.15.2"
+  }
+}

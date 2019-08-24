@@ -1,0 +1,18 @@
+{
+  "development": {
+    "username": "brandon",
+    "password": null,
+    "database": "woof-dev",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  },
+  "test": {
+    "username": "brandon",
+    "password": null,
+    "database": "woof-test",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  }
+}

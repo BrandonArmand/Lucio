@@ -1,8 +1,14 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Pet = sequelize.define('Pet', {
-    name: DataTypes.STRING,
-    gender: DataTypes.STRING,
+    name: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
+    gender: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
     tag: DataTypes.STRING,
     description: DataTypes.STRING
   }, {});

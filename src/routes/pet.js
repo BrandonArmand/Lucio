@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const petController = require("../controllers/petController")
+const auth = require("../auth/helpers.js")
 
 router.get("/api/pet", petController.index);
 router.post("/api/pet", petController.new);

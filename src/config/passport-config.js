@@ -7,7 +7,6 @@ module.exports = {
   init(app){
 
     app.use(passport.initialize());
-    app.use(passport.session());
 
     passport.use(new LocalStrategy({
       usernameField: "email"
@@ -16,7 +15,6 @@ module.exports = {
         where: { email }
       })
       .then((user) => {
-
         if (!user || !authHelper.comparePass(password, user.password)) {
           return done(null, false, { message: "Invalid email or password" });
         }

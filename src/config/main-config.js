@@ -1,7 +1,8 @@
 require("dotenv").config();
+const passportConfig = require("./passport-config");
 
 module.exports = {
-  init(){
-
+  init(app){
+    passportConfig.init(app);
   }
 };

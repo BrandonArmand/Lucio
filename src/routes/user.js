@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const passport = require("passport");
+const auth = require("../auth/helpers.js")
 
-router.post("/api/user", userController.new);
-router.get("/api/user", userController.show);
+router.post("/api/user", auth.ensureAPIKey, userController.new);
+router.get("/api/user", auth.ensureAPIKey, auth.ensureToken, userController.show);
 
-router.get("/api/user/all", userController.index);
-
+router.get("/api/users", auth.ensureAPIKey, userController.index);
+router.post("/api/signin", auth.ensureAPIKey, passport.authenticate('local', {session: false}), userController.signIn)
 
 module.exports = router;

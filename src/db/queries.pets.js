@@ -63,8 +63,20 @@ module.exports = {
     .catch(err=>{
       callback(err)
     })
+  },
+
+  addUser(user, pet, callback){
+    return pet.addOwner(user)
+    .then(user=>{
+      callback(null, user)
+    })
+    .catch(err=>{
+      callback(err)
+    })
   }
 }
+
+
 
 function createTag(name, id){
   return `${shrinkName(name)}-${shortId.generateId(id)}`

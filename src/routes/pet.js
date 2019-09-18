@@ -8,5 +8,7 @@ router.post("/api/pet/new", auth.ensureAPIKey, auth.ensureToken, petController.n
 
 router.get("/api/pet/:tag", auth.ensureAPIKey, petController.show); //View Pet
 router.post("/api/pet/:tag/delete", auth.ensureAPIKey, auth.ensureToken, auth.ensurePet, petController.destroy); //Delete User's Pet
+router.post("/api/pet/:tag/add/:user", auth.ensureAPIKey, auth.ensureToken, auth.ensurePet, petController.newOwner); //Delete User's Pet
+
 
 module.exports = router;

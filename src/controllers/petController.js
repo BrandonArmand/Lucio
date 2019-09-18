@@ -40,5 +40,15 @@ module.exports = {
                 res.json({"Success":"Pet deleted."})
             }
         })
+    },
+    newOwner(req,res,next){
+        petQueries.addUser(req.params.user, req.pet, (err, pet)=>{
+            if(err){
+                res.json({"err":err})
+            }
+            else{
+                res.redirect(`/api/pet/${req.params.tag}`)
+            }
+        })
     }
 }

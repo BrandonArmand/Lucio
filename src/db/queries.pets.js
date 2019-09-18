@@ -1,8 +1,10 @@
 const Pet = require("./models").Pet;
+const shortId = require("./helpers/shortid.js");
+const shrinkName = require("./helpers/shrink.js");
 
 module.exports = {
-  getAllPets(callback){
-    return Pet.findAll()
+  getAllPets(user, callback){
+    return user.getPets()
     .then((pet) => {
       callback(null, pet);
     })
@@ -10,32 +12,51 @@ module.exports = {
       callback(err);
     })
   },
-  addPet(newPet, callback){
-    return Pet.create({
-      name: newPet.name,
-      gender: newPet.gender,
-      description: newPet.description
+
+  addPet(user, pet, callback){
+    return user.createPet({
+        name: pet.name,
+        gender: pet.gender
     })
-    .then((pet) => {
-      callback(null, pet);
-    })
-    .catch((err) => {
-      callback(err);
-    })
-  },
-  getPet(pet,callback){
-    return Pet.findByPk(pet.id)
     .then((pet)=>{
-      callback(null,pet)
+        Pet.update(
+          {tag: createTag(pet.name, pet.id)},
+          {returning: true, where: {id: pet.id}}
+        )
+        .then(pet=>{
+          callback(null,pet[1])
+        })
+        .catch(err=>{
+          callback(err)
+        })
+    })
+    .catch(err => {
+        callback(err)
+    })
+  },
+
+  getPet(pet,callback){
+    return Pet.findAll({
+      where: {
+        tag: pet.tag
+      }
+    })
+    .then((pet)=>{
+      pet[0].getOwners()
+      .then(owners=>{
+        callback(null,{pet,owners})
+      })
+      .catch(err => {
+        callback(err)
+      })
     })
     .catch(err => {
       callback(err)
     })
   },
-  destroyPet(pet,callback){
-    return Pet.destroy({
-      where: {id: pet.id}
-    })
+
+  destroyPet(user, pet, callback){
+    return user.removePet(pet.id)
     .then(()=>{
       callback(null)
     })
@@ -43,4 +64,8 @@ module.exports = {
       callback(err)
     })
   }
+}
+
+function createTag(name, id){
+  return `${shrinkName(name)}-${shortId.generateId(id)}`
 }

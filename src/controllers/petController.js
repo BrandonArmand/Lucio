@@ -2,7 +2,7 @@ const petQueries = require("../db/queries.pets.js");
 
 module.exports = {
     index(req, res, next){
-        petQueries.getAllPets((err,pets)=>{
+        petQueries.getAllPets(req.user, (err,pets)=>{
             if(err){
                 res.json({"error":err})
             }
@@ -11,10 +11,10 @@ module.exports = {
             }
         });
     },
-    new(req, res, next){
-        petQueries.addPet(req.query, (err,pet)=>{
+    new(req,res,next){
+        petQueries.addPet(req.user,req.query,(err,pet)=>{
             if(err){
-                res.json({"err":err})
+                res.json(err)
             }
             else{
                 res.json(pet)
@@ -32,9 +32,9 @@ module.exports = {
         })
     },
     destroy(req,res,next){
-        petQueries.destroyPet(req.params,(err)=>{
+        petQueries.destroyPet(req.user, req.pet, (err)=>{
             if(err){
-                res.json({"err":"Not authorized."})
+                res.json({"err":err})
             }
             else{
                 res.json({"Success":"Pet deleted."})

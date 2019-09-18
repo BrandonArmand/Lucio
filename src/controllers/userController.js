@@ -1,7 +1,5 @@
 const userQueries = require("../db/queries.users.js");
-var jwt = require('jsonwebtoken');
-const auth = require("../auth/helpers.js")
-const passport = require("passport");
+const {signToken} = require("../auth/helpers.js")
 
 module.exports = {
     new(req, res, next){
@@ -10,7 +8,7 @@ module.exports = {
                 res.json({"err":err})
             }
             else{
-                let token = auth.signToken(user)
+                let token = signToken(user)
 
                 res.json({token: token})
             }
@@ -26,18 +24,6 @@ module.exports = {
             }
         })
     },
-    // show(req,res,next){
-    //     auth.ensureToken(req,res, (user)=>{
-    //         userQueries.getUser(user,(err,user)=>{
-    //             if(err){
-    //                 res.sendStatus(403);
-    //             }
-    //             else{
-    //                 res.json(user)
-    //             }
-    //         })
-    //     })
-    // },
     show(req,res,next){
         userQueries.getUser(req.user,(err,user)=>{
             if(err){
@@ -49,7 +35,7 @@ module.exports = {
         })
     },
     signIn(req,res,next){
-        let token = auth.signToken(req.user)
+        let token = signToken(req.user)
 
         res.json({token: token})
     }

@@ -1,5 +1,7 @@
 var jwt = require('jsonwebtoken');
 const {getUser} = require("../db/queries.users.js");
+const owners_pets = require("../db/models").owners_pets;
+const Pet = require("../db/models").Pet;
 const bcrypt = require("bcryptjs");
 
 
@@ -53,11 +55,41 @@ module.exports = {
     ensureAPIKey(req, res, next){
         const apiKey = req.headers["apikey"];
 
-        if(apiKey != process.env.APIKEY){
+        if(apiKey !== process.env.APIKEY){
             res.sendStatus(401)
         }
         else{
             next()
         }
+    },
+    
+    ensurePet(req, res, next){
+        Pet.findAll({
+            where: {
+              tag: req.params.tag
+            }
+        })
+        .then((pet)=>{
+            let currentPet = pet[0]
+            
+            owners_pets.findAll({
+                where:{
+                  userId: req.user.id,
+                  petId: currentPet.id
+                }
+              })
+            .then((isOwner)=>{
+                if(isOwner.length){
+                    req.pet = currentPet
+                    next()
+                }
+                else{
+                    res.sendStatus(401)
+                }
+            })
+        })
+        .catch(err=>{
+            res.json({"err":err})
+        })
     }
 }

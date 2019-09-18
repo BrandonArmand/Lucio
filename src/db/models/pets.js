@@ -9,11 +9,19 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING
     },
-    tag: DataTypes.STRING,
+    tag: {
+      unique: true,
+      type: DataTypes.STRING
+    },
     description: DataTypes.STRING
   }, {});
   Pet.associate = function(models) {
     // associations can be defined here
+    Pet.belongsToMany(models.User,{
+      as: 'Owners',
+      through: 'owners_pets',
+      foreignKey: 'petId'
+    })
   };
   return Pet;
 };

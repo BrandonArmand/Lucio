@@ -23,44 +23,37 @@ module.exports = {
         gender: pet.gender
     })
     .then((pet)=>{
-        return pet.update(
-          {tag: createTag(pet.name, pet.id)},
-          {returning: true}
-        )
-        .then(newPet=>{
-          returnedPet = newPet;
-
-          activateUser(user,pet)
-          .then(()=>{
-            callback(null,returnedPet)
-          })
-          .catch(err=>{
-            callback(err)
-          })
-        })
-        .catch(err=>{
-          callback(err)
-        })
+      return pet.update(
+        {tag: createTag(pet.name, pet.id)},
+        {returning: true}
+      )
     })
-    .catch(err => {
-        callback(err)
+    .then((newPet)=>{
+      returnedPet = newPet;
+      return activateUser(user,newPet)
+    })
+    .then(()=>{
+      callback(null,returnedPet)
+    })
+    .catch((err) => {
+      callback(err)
     })
   },
 
   getPet(pet,callback){
+    let foundPet;
+
     return Pet.findAll({
       where: {
         tag: pet.tag
       }
     })
     .then((pet)=>{
-      pet[0].getOwners()
-      .then(owners=>{
-        callback(null,{pet,owners})
-      })
-      .catch(err => {
-        callback(err)
-      })
+      foundPet = pet[0];
+      return foundPet.getOwners();
+    })
+    .then(owners=>{
+      callback(null,{foundPet,owners})
     })
     .catch(err => {
       callback(err)

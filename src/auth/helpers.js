@@ -64,28 +64,31 @@ module.exports = {
     },
 
     ensurePet(req, res, next){
+        let currentPet;
+
         Pet.findAll({
             where: {
               tag: req.params.tag
             }
         })
         .then((pet)=>{
-            let currentPet = pet[0]
+            currentPet = pet[0]
             
-            owners_pets.findAll({
+            return owners_pets.findAll({
                 where:{
                   userId: req.user.id,
-                  petId: currentPet.id                }
-              })
-            .then((isOwner)=>{
-                if(isOwner.length){
-                    req.pet = currentPet
-                    next()
-                }
-                else{
-                    res.sendStatus(401)
+                  petId: currentPet.id
                 }
             })
+        })
+        .then((isOwner)=>{
+            if(isOwner.length){
+                req.pet = currentPet
+                next()
+            }
+            else{
+                res.sendStatus(401)
+            }
         })
         .catch(err=>{
             res.json({"err":err})

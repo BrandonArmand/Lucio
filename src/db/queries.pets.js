@@ -1,4 +1,6 @@
 const Pet = require("./models").Pet;
+const owners_pets = require("./models").owners_pets;
+
 const shortId = require("./helpers/shortid.js");
 const shrinkName = require("./helpers/shrink.js");
 
@@ -14,17 +16,27 @@ module.exports = {
   },
 
   addPet(user, pet, callback){
+    let returnedPet;
+
     return user.createPet({
         name: pet.name,
         gender: pet.gender
     })
     .then((pet)=>{
-        Pet.update(
+        return pet.update(
           {tag: createTag(pet.name, pet.id)},
-          {returning: true, where: {id: pet.id}}
+          {returning: true}
         )
-        .then(pet=>{
-          callback(null,pet[1])
+        .then(newPet=>{
+          returnedPet = newPet;
+
+          activateUser(user,pet)
+          .then(()=>{
+            callback(null,returnedPet)
+          })
+          .catch(err=>{
+            callback(err)
+          })
         })
         .catch(err=>{
           callback(err)
@@ -76,7 +88,15 @@ module.exports = {
   }
 }
 
-
+function activateUser(user,pet){
+  return owners_pets.unscoped().update(
+    {active: 1},
+    {returning: true, where: {
+      petId: pet.id,
+      userId: user.id
+    }}
+  )
+}
 
 function createTag(name, id){
   return `${shrinkName(name)}-${shortId.generateId(id)}`

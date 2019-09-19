@@ -62,7 +62,7 @@ module.exports = {
             next()
         }
     },
-    
+
     ensurePet(req, res, next){
         Pet.findAll({
             where: {
@@ -75,8 +75,7 @@ module.exports = {
             owners_pets.findAll({
                 where:{
                   userId: req.user.id,
-                  petId: currentPet.id
-                }
+                  petId: currentPet.id                }
               })
             .then((isOwner)=>{
                 if(isOwner.length){

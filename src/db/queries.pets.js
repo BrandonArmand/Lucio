@@ -1,6 +1,5 @@
 const Pet = require("./models").Pet;
 const owners_pets = require("./models").owners_pets;
-
 const shortId = require("./helpers/shortid.js");
 const shrinkName = require("./helpers/shrink.js");
 
@@ -43,17 +42,13 @@ module.exports = {
   getPet(pet,callback){
     let foundPet;
 
-    return Pet.findAll({
-      where: {
-        tag: pet.tag
-      }
-    })
+    return getPetFromTag(pet.tag)
     .then((pet)=>{
-      foundPet = pet[0];
-      return foundPet.getOwners();
+      foundPet = pet
+      return pet.getOwners();
     })
     .then(owners=>{
-      callback(null,{foundPet,owners})
+      callback(null,{Pet:foundPet,owners})
     })
     .catch(err => {
       callback(err)
@@ -78,7 +73,58 @@ module.exports = {
     .catch(err=>{
       callback(err)
     })
+  },
+
+  acceptPet(user, tag, callback){
+    return getPetFromTag(tag)
+    .then((pet)=>{
+      activateUser(user, pet)
+    })
+    .then((association)=>{
+      callback(null,association)
+    })
+    .catch((err)=>{
+      callback(err)
+    })
+  },
+
+  declinePet(user, tag, callback){
+    return getPetFromTag(tag)
+    .then((pet)=>{
+      user.removePet(pet.id)
+    })
+    .then(()=>{
+      callback(null)
+    })
+    .catch((err)=>{
+      callback(err)
+    })
+  },
+
+  getPendingPets(user,callback){
+    Pet.sequelize.query('SELECT "Pets"."name", "Pets"."tag" FROM "Pets" inner join "owners_pets" on "Pets"."id" = "owners_pets"."petId" where "owners_pets"."userId" = ? and "active" = 0', 
+      { 
+        replacements: [user.id],
+        type: Pet.sequelize.QueryTypes.SELECT
+      })
+    .then(pets=>{
+      callback(null,pets)
+    })
+    .catch(err=>{
+      callback(err)
+    })
   }
+}
+
+function getPetFromTag(tag){
+  return Pet.findAll({
+    where: {
+      tag: tag
+    }
+  })
+  .then(pet=>{
+    return pet[0]
+  })
 }
 
 function activateUser(user,pet){

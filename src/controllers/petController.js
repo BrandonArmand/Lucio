@@ -50,5 +50,35 @@ module.exports = {
                 res.redirect(`/api/pet/${req.params.tag}`)
             }
         })
+    },
+    pendingInvites(req, res, next){
+        petQueries.getPendingPets(req.user, (err,pets)=>{
+            if(err){
+                res.json({"error":err})
+            }
+            else{
+                res.json(pets)
+            }
+        });
+    },
+    acceptPetInvite(req,res,next){
+        petQueries.acceptPet(req.user, req.params.tag, (err,pet)=>{
+            if(err){
+                res.json({"err":err})
+            }
+            else{
+                res.redirect(`/api/pet/${req.params.tag}`)
+            }
+        })
+    },
+    declinePetInvite(req,res,next){
+        petQueries.declinePet(req.user, req.params.tag, (err)=>{
+            if(err){
+                res.json({"err":err})
+            }
+            else{
+                res.json({"success":""})
+            }
+        })
     }
 }

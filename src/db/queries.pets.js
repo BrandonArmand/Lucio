@@ -1,5 +1,6 @@
 const Pet = require("./models").Pet;
 const owners_pets = require("./models").owners_pets;
+const chatUsers = require("./models").chat_room_user;
 const shortId = require("./helpers/shortid.js");
 const shrinkName = require("./helpers/shrink.js");
 
@@ -102,13 +103,55 @@ module.exports = {
   },
 
   getPendingPets(user,callback){
-    Pet.sequelize.query('SELECT "Pets"."name", "Pets"."tag" FROM "Pets" inner join "owners_pets" on "Pets"."id" = "owners_pets"."petId" where "owners_pets"."userId" = ? and "active" = 0', 
+    return Pet.sequelize.query(`
+      SELECT "Pets"."name", "Pets"."tag" 
+      FROM "Pets" 
+        inner join "owners_pets" 
+          on "Pets"."id" = "owners_pets"."petId" 
+      where "owners_pets"."userId" = ? and "active" = 0`, 
       { 
         replacements: [user.id],
         type: Pet.sequelize.QueryTypes.SELECT
       })
     .then(pets=>{
       callback(null,pets)
+    })
+    .catch(err=>{
+      callback(err)
+    })
+  },
+
+  createChat(currentUser, tag, callback){
+    let currentPet;
+    let chatRoom;
+
+    return getPetFromTag(tag)
+    .then((pet)=>{
+      currentPet = pet
+      return currentPet.createChat()
+    })
+    .then(chat=>{
+      chatRoom = chat
+      return currentPet.getOwners();
+    })
+    .then(owners=>{
+      let userArray = []
+      owners.forEach(user => {
+        userArray.push({
+          userId: user.id,
+          roomId: chatRoom.id,
+          active: 1
+        }) 
+      });
+      userArray.push({
+        userId: currentUser.id,
+        roomId: chatRoom.id,
+        active: 1
+      })
+      return chatUsers.bulkCreate(userArray)
+    })
+    .then(chat=>{
+      callback(null,chat)
     })
     .catch(err=>{
       callback(err)

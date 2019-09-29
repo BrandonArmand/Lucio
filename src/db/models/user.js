@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
       as: 'Pets',
       through: 'owners_pets',
       foreignKey: 'userId'
+    }),
+
+    User.hasMany(models.chat_room_user,{
+      foreignKey: 'userId',
+      as: 'Conversations'
     })
   };
   return User;

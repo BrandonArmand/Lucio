@@ -80,5 +80,15 @@ module.exports = {
                 res.json({"success":""})
             }
         })
+    },
+    startChat(req,res,next){
+        petQueries.createChat(req.user, req.params.tag, (err,chat)=>{
+            if(err){
+                res.json({"err":err})
+            }
+            else{
+                res.json({chat})
+            }
+        })
     }
 }

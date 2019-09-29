@@ -5,7 +5,7 @@ const Messages = require("./models").chat_room_message;
 module.exports = {
   getAllRooms(user, callback){
     return User.sequelize.query(`
-      select "chat_room_users"."roomId", "Pets"."name" 
+      select "chat_room_users"."roomId", "Pets"."name", "Pets"."tag"
       from "chat_room_users" 
         inner join "chat_rooms" 
           on "chat_room_users"."roomId" = "chat_rooms"."id" 

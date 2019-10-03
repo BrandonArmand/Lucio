@@ -1,6 +1,5 @@
 var jwt = require('jsonwebtoken');
 const {getUser} = require("../db/queries.users.js");
-const owners_pets = require("../db/models").owners_pets;
 const Pet = require("../db/models").Pet;
 const bcrypt = require("bcryptjs");
 
@@ -64,26 +63,24 @@ module.exports = {
     },
 
     ensurePet(req, res, next){
-        let currentPet;
-
-        Pet.findAll({
-            where: {
-              tag: req.params.tag
-            }
-        })
-        .then((pet)=>{
-            currentPet = pet[0]
-            
-            return owners_pets.findAll({
-                where:{
-                  userId: req.user.id,
-                  petId: currentPet.id
-                }
-            })
+        Pet.sequelize.query(`
+            SELECT "Pets"."id"
+            FROM "Pets" 
+                inner join "owners_pets" 
+                on "Pets"."id" = "owners_pets"."petId" 
+            where "owners_pets"."userId" = ? 
+            and "Pets"."tag" = ?
+            and "active" = 1`,
+        { 
+            replacements: [req.user.id, req.params.tag],
+            type: Pet.sequelize.QueryTypes.SELECT,
+            model: Pet,
+            mapToModel: true,
+            plain: true
         })
         .then((isOwner)=>{
-            if(isOwner.length){
-                req.pet = currentPet
+            if(isOwner){
+                req.pet = isOwner
                 next()
             }
             else{

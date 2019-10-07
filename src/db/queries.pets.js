@@ -40,6 +40,23 @@ module.exports = {
     })
   },
 
+  updateInfo(pet, newInfo, callback){
+    return pet.update(
+      {
+        name: newInfo.name || pet.name,
+        gender: newInfo.gender || pet.gender,
+        description: newInfo.description || pet.description
+      },
+      {returning: true}
+    )
+    .then(pet=>{
+      callback(null,pet)
+    })
+    .catch(err => {
+      callback(err)
+    })
+  },
+
   getPet(pet,callback){
     let foundPet;
 

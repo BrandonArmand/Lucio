@@ -4,6 +4,7 @@ const auth = require("../auth/helpers.js")
 const petController = require("../controllers/petController")
 
 router.get("/api/pets", auth.ensureAPIKey, auth.ensureToken, petController.index); //User's Pets
+router.put("/api/pet/:tag/update", auth.ensureAPIKey, auth.ensureToken, auth.ensurePet, petController.update); //Delete User's Pet
 
 router.get("/api/pets/invites", auth.ensureAPIKey, auth.ensureToken, petController.pendingInvites); //User's Pets
 router.put("/api/pets/invite/:tag/accept", auth.ensureAPIKey, auth.ensureToken, petController.acceptPetInvite) //Accept Ownership

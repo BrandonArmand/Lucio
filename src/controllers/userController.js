@@ -14,6 +14,16 @@ module.exports = {
             }
         })
     },
+    update(req,res,next){
+        userQueries.updateInfo(req.user, req.query, (err,user)=>{
+            if(err){
+                res.json(err)
+            }
+            else{
+                res.json(user)
+            }
+        })
+    },
     index(req,res,next){
         userQueries.getAllUsers((err,users)=>{
             if(err){

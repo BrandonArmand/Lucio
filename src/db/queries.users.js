@@ -35,5 +35,22 @@ module.exports = {
     .catch(err => {
       callback(err)
     })
+  },
+  updateInfo(user, newInfo, callback){
+    return user.update(
+      {
+        name: newInfo.namev || user.name,
+        email: newInfo.email || user.email,
+        phone: newInfo.phone || user.phone,
+        address: newInfo.address || user.address
+      },
+      {returning: true}
+    )
+    .then((user)=>{
+      callback(null,user)
+    })
+    .catch(err => {
+      callback(err)
+    })
   }
 }

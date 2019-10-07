@@ -64,7 +64,7 @@ module.exports = {
 
     ensurePet(req, res, next){
         Pet.sequelize.query(`
-            SELECT "Pets"."id"
+            SELECT "Pets"."id", "Pets"."name", "Pets"."gender", "Pets"."description"
             FROM "Pets" 
                 inner join "owners_pets" 
                 on "Pets"."id" = "owners_pets"."petId" 

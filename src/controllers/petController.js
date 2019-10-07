@@ -21,6 +21,16 @@ module.exports = {
             }
         })
     },
+    update(req, res, next){
+        petQueries.updateInfo(req.pet, req.query, (err,pet)=>{
+            if(err){
+                res.json(err)
+            }
+            else{
+                res.redirect(`/api/pet/${pet.tag}`)
+            } 
+        })
+    },
     show(req,res,next){
         petQueries.getPet(req.params,(err,pet)=>{
             if(err){

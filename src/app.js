@@ -7,7 +7,8 @@ const routeConfig = require("./config/route-config.js");
 app.disable('etok')
 app.use(bodyParser.text());
 app.use(cors({
-    "Access-Control-Allow-Headers": "Authorization,apikey"
+    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization, apikey",
+    "Access-Control-Expose-Headers": "apikey"
 }))
 
 appConfig.init(app);

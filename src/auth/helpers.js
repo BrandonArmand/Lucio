@@ -53,12 +53,16 @@ module.exports = {
 
     ensureAPIKey(req, res, next){
         const apiKey = req.headers["apikey"];
-
-        if(apiKey !== process.env.APIKEY){
-            res.sendStatus(401)
+        if(apiKey){
+            if(apiKey !== process.env.APIKEY){
+                res.json({error:"Invalid APIKey"})
+            }
+            else{
+                next()
+            }
         }
-        else{
-            next()
+        else {
+            res.json({error:"APIKey required"})
         }
     },
 

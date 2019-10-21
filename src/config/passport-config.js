@@ -13,7 +13,7 @@ module.exports = {
     }, (email, password, done) => {
       let decodeEmail = decodeURIComponent(email)
       User.findOne({
-        where: { decodeEmail }
+        where: { email: decodeEmail }
       })
       .then((user) => {
         if (!user || !authHelper.comparePass(decodeURIComponent(password), user.password)) {
